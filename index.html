@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポケモンアドベンチャー - Phase2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        #gameCanvas {
+            border: 3px solid #FFD700;
+            border-radius: 10px;
+            background: #000;
+            display: block;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .controls h3 {
+            color: #FFD700;
+            margin-top: 0;
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .control-section {
+            text-align: left;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .control-section h4 {
+            color: #4ECDC4;
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        
+        .control-item {
+            margin: 5px 0;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .key {
+            background: #2C3E50;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .status-item {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 5px 10px;
+            background: rgba(46, 204, 113, 0.3);
+            border-radius: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #FFD700;
+        }
+        
+        .image-notice {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #FFC107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .image-notice h4 {
+            color: #FFC107;
+            margin: 0 0 10px 0;
+        }
+        
+        .folder-structure {
+            text-align: left;
+            font-family: monospace;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 style="text-align: center; color: #FFD700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+            🎮 ポケモンアドベンチャー Phase2
+        </h1>
+        
+        <canvas id="gameCanvas" width="800" height="600">
+            お使いのブラウザはCanvas要素に対応していません。
+        </canvas>
+        
+        <div class="controls">
+            <h3>🎮 ゲーム操作</h3>
+            <div class="controls-grid">
+                <div class="control-section">
+                    <h4>基本操作</h4>
+                    <div class="control-item">
+                        <span>移動</span>
+                        <span><span class="key">WASD</span> or <span class="key">↑↓←→</span></span>
+                    </div>
+                    <div class="control-item">
+                        <span>ゲーム開始</span>
+                        <span><span class="key">Enter</span></span>
+                    </div>
+                    <div class="control-item">
+                        <span>野生ポケモン</span>
+                        <span><span class="key">Space</span></span>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <h4>バトル・メニュー</h4>
+                    <div class="control-item">
+                        <span>攻撃</span>
+                        <span><span class="key">1</span></span>
+                    </div>
+                    <div class="control-item">
+                        <span>逃げる</span>
+                        <span><span class="key">2</span></span>
+                    </div>
+                    <div class="control-item">
+                        <span>ポケモン一覧</span>
+                        <span><span class="key">I</span></span>
+                    </div>
+                    <div class="control-item">
+                        <span>戻る</span>
+                        <span><span class="key">Esc</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status">
+            <div class="status-item">✅ ゲームエンジン動作中</div>
+            <div class="status-item">🎨 画像システム統合</div>
+            <div class="status-item">⚡ Phase2開発版</div>
+        </div>
+        
+        <div class="image-notice">
+            <h4>📁 画像ファイルについて</h4>
+            <p>現在、フォールバック画像（色付き四角形）でゲームが動作します。<br>
+            実際の画像を表示したい場合は、以下のフォルダ構造で画像ファイルを配置してください：</p>
+            
+            <div class="folder-structure">
+pokemon-game/<br>
+├── index.html<br>
+├── src/<br>
+│   └── core/<br>
+│       ├── game.js<br>
+│       ├── pokemon.js<br>
+│       └── imageManager.js<br>
+└── assets/<br>
+    ├── pokemon/<br>
+    │   ├── 001-bulbasaur.png<br>
+    │   ├── 004-charmander.png<br>
+    │   ├── 007-squirtle.png<br>
+    │   ├── 025-pikachu.png<br>
+    │   └── placeholder.png<br>
+    ├── trainer/<br>
+    │   ├── player.png<br>
+    │   └── wild-pokemon.png<br>
+    └── ui/<br>
+        ├── battle-bg.png<br>
+        └── grass.png
+            </div>
+            
+            <p style="margin-top: 10px; font-size: 14px;">
+                💡 <strong>ヒント:</strong> 画像がない場合でも、自動生成されるカラフルな四角形でゲームを楽しめます！
+            </p>
+        </div>
+    </div>
+
+    <!-- Core Game Scripts -->
+    <script src="src/core/pokemon.js"></script>
+    <script src="src/core/imageManager.js"></script>
+    <script src="src/core/game.js"></script>
+    
+    <script>
+        // デバッグ用コンソール出力
+        console.log('🎮 ポケモンゲーム Phase2 - 画像システム統合版');
+        console.log('📁 ファイル構造の確認:');
+        console.log('  ✅ Pokemon クラス読み込み');
+        console.log('  ✅ ImageManager クラス読み込み');  
+        console.log('  ✅ Game エンジン読み込み');
+
+        // エラーハンドリング
+        window.addEventListener('error', (e) => {
+            console.error('🚨 ゲームエラー:', e.error);
+        });
+        
+        // デバッグ用関数をグローバルに公開
+        window.debugGame = {
+            addPokemon: () => {
+                if (window.game) {
+                    window.game.addDebugPokemon();
+                }
+            },
+            saveGame: () => {
+                if (window.game) {
+                    window.game.saveGame();
+                }
+            },
+            loadGame: () => {
+                if (window.game) {
+                    return window.game.loadGame();
+                }
+            },
+            checkImages: () => {
+                if (window.game && window.game.imageManager) {
+                    console.log('📊 読み込み済み画像:', window.game.imageManager.loadedImages);
+                }
+            }
+        };
+        
+        console.log('🔧 デバッグ用コマンド:');
+        console.log('  debugGame.addPokemon() - デバッグポケモン追加');
+        console.log('  debugGame.saveGame() - ゲーム保存');
+        console.log('  debugGame.loadGame() - ゲーム読み込み');
+        console.log('  debugGame.checkImages() - 画像状態確認');
+    </script>
+</body>
+</html>
